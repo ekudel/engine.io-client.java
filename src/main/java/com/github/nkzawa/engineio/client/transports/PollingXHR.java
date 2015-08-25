@@ -2,6 +2,7 @@ package com.github.nkzawa.engineio.client.transports;
 
 
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.engineio.client.HttpConnectionProvider;
 import com.github.nkzawa.thread.EventThread;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -37,6 +38,7 @@ public class PollingXHR extends Polling {
         }
         opts.uri = this.uri();
         opts.sslContext = this.sslContext;
+        opts.httpConnectionProvider = this.httpConnectionProvider;
 
         Request req = new Request(opts);
 
@@ -148,12 +150,14 @@ public class PollingXHR extends Polling {
 
         private SSLContext sslContext;
         private HttpURLConnection xhr;
+        private HttpConnectionProvider httpConnectionProvider;
 
         public Request(Options opts) {
             this.method = opts.method != null ? opts.method : "GET";
             this.uri = opts.uri;
             this.data = opts.data;
             this.sslContext = opts.sslContext;
+            this.httpConnectionProvider = opts.httpConnectionProvider;
         }
 
         public void create() {
@@ -161,7 +165,12 @@ public class PollingXHR extends Polling {
             try {
                 logger.fine(String.format("xhr open %s: %s", this.method, this.uri));
                 URL url = new URL(this.uri);
-                xhr = (HttpURLConnection)url.openConnection();
+                if (httpConnectionProvider != null) {
+                    xhr = httpConnectionProvider.openConnection(url);
+                }
+                if (xhr == null) {
+                    xhr = (HttpURLConnection) url.openConnection();
+                }
                 xhr.setRequestMethod(this.method);
             } catch (IOException e) {
                 this.onError(e);
@@ -317,6 +326,7 @@ public class PollingXHR extends Polling {
             public String method;
             public byte[] data;
             public SSLContext sslContext;
+            public HttpConnectionProvider httpConnectionProvider;
         }
     }
 }

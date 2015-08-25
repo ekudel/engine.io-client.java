@@ -11,6 +11,7 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_17;
 import org.java_websocket.handshake.ServerHandshake;
 
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
@@ -94,6 +95,10 @@ public class WebSocket extends Transport {
                     });
                 }
             };
+            final InetSocketAddress proxyAddress = proxyHost != null && proxyPort >= 0
+                    ? new InetSocketAddress(proxyHost, proxyPort) : null;
+            this.ws.setProxy(proxyAddress, proxyLogin, proxyPassword);
+
             if (this.sslContext != null) {
                 this.ws.setWebSocketFactory(new DefaultSSLWebSocketClientFactory(this.sslContext));
             }

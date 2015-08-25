@@ -42,6 +42,11 @@ public abstract class Transport extends Emitter {
     protected String timestampParam;
     protected SSLContext sslContext;
     protected Socket socket;
+    protected String proxyHost;
+    protected int proxyPort;
+    protected String proxyLogin;
+    protected String proxyPassword;
+    protected HttpConnectionProvider httpConnectionProvider;
 
     protected ReadyState readyState;
 
@@ -55,6 +60,11 @@ public abstract class Transport extends Emitter {
         this.timestampRequests = opts.timestampRequests;
         this.sslContext = opts.sslContext;
         this.socket = opts.socket;
+        this.proxyHost = opts.proxyHost;
+        this.proxyPort = opts.proxyPort;
+        this.proxyLogin = opts.proxyLogin;
+        this.proxyPassword = opts.proxyPassword;
+        this.httpConnectionProvider = opts.httpConnectionProvider;
     }
 
     protected Transport onError(String msg, Exception desc) {
@@ -142,8 +152,13 @@ public abstract class Transport extends Emitter {
         public boolean timestampRequests;
         public int port = -1;
         public int policyPort = -1;
+        public String proxyHost;
+        public int proxyPort = -1;
+        public String proxyLogin;
+        public String proxyPassword;
         public Map<String, String> query;
         public SSLContext sslContext;
+        public HttpConnectionProvider httpConnectionProvider;
         protected Socket socket;
     }
 }

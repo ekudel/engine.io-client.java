@@ -112,6 +112,10 @@ public class Socket extends Emitter {
     private String hostname;
     private String path;
     private String timestampParam;
+    public String proxyHost;
+    public int proxyPort = -1;
+    public String proxyLogin;
+    public String proxyPassword;
     private List<String> transports;
     private List<String> upgrades;
     private Map<String, String> query;
@@ -121,6 +125,7 @@ public class Socket extends Emitter {
     private Future pingTimeoutTimer;
     private Future pingIntervalTimer;
     private SSLContext sslContext;
+    private HttpConnectionProvider httpConnectionProvider;
 
     private ReadyState readyState;
     private ScheduledExecutorService heartbeatScheduler;
@@ -197,6 +202,11 @@ public class Socket extends Emitter {
                 opts.transports : new String[]{Polling.NAME, WebSocket.NAME}));
         this.policyPort = opts.policyPort != 0 ? opts.policyPort : 843;
         this.rememberUpgrade = opts.rememberUpgrade;
+        this.proxyHost = opts.proxyHost;
+        this.proxyPort = opts.proxyPort;
+        this.proxyLogin = opts.proxyLogin;
+        this.proxyPassword = opts.proxyPassword;
+        this.httpConnectionProvider = opts.httpConnectionProvider;
     }
 
     /**
@@ -253,6 +263,11 @@ public class Socket extends Emitter {
         opts.timestampRequests = this.timestampRequests;
         opts.timestampParam = this.timestampParam;
         opts.policyPort = this.policyPort;
+        opts.proxyHost = this.proxyHost;
+        opts.proxyPort = this.proxyPort;
+        opts.proxyLogin = this.proxyLogin;
+        opts.proxyPassword = this.proxyPassword;
+        opts.httpConnectionProvider = this.httpConnectionProvider;
         opts.socket = this;
 
         if (WebSocket.NAME.equals(name)) {
